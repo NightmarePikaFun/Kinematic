@@ -1,27 +1,27 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 
 public class Kinematics : MonoBehaviour
 {
-
-    [SerializeField]
-    private Transform target;
     private SingleDegreeJoint[] joints;
+
+    public Transform target;
+
     public float speed = 2;
     public float[] solution;
-    //----//
-    private float oldRange = 999999999;
-    private Vector3[] startPos;
-    [SerializeField]
+
+    public float learningRate = 0.5f;
+    public float distanceThreshold = 0.5f;
+
     private Transform actor;
+
+
 
     // Start is called before the first frame update
     void Start()
     {
         joints = GetComponentsInChildren<SingleDegreeJoint>();
+        actor = GameObject.FindWithTag("Actor").transform;
         solution = new float[joints.Length];
         for (var i = 0; i < joints.Length; i++)
         {
@@ -32,32 +32,69 @@ public class Kinematics : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Solve();
+        InverseKinematics(target.position);
+
+
         for (var i = 0; i < solution.Length; i++)
         {
-            Debug.Log(joints[i].GetPosition());
-            //joints[i].SetValue(solution[i]);
+            joints[i].SetValue(solution[i]);
         }
     }
 
-    private void Solve()
+    public float DistanceFromTarget(Vector3 target)
+    {
+        Vector3 point = actor.position;
+        return Vector3.Distance(point, target);
+    }
+
+
+    public void hateWorld()
     {
         var delta = Time.deltaTime * speed;
-        if (Mathf.Abs(Vector3.Distance(Vector3.zero,target.position))>9)
-        {
-            Debug.Log("I can't");
-        }
         for (var i = 0; i < solution.Length; i++)
         {
-            solution[i] = InRange(solution[i]+(i+1)*delta);
-            
+            solution[i] = InRange(solution[i] + (i + 1) * delta);
         }
     }
 
-    private void Clac()
+
+    public float PartialGradient(Vector3 target, int i, float samplingDistance)
     {
 
+        float angle = joints[i].GetValue();
+
+        float fX = DistanceFromTarget(target);
+        joints[i].SetValue(angle + samplingDistance);
+
+        float fD= DistanceFromTarget(target);
+
+        float gradient = (fD - fX) / samplingDistance;
+
+        joints[i].SetValue(angle);
+        return gradient;
     }
+
+    public void InverseKinematics(Vector3 target)
+    {
+        if (DistanceFromTarget(target) < distanceThreshold)
+            return;
+        
+
+        for (int i = joints.Length - 1; i >= 0; i--)
+        {
+            var delta = Time.deltaTime * speed;
+            float gradient = PartialGradient(target, i, delta);
+            solution[i] -= learningRate * gradient;
+
+            // solution[i] = solution[i] < joints[i].min || solution[i] > joints[i].max ? -solution[i] : solution[i];
+            
+            solution[i] = Mathf.Clamp(solution[i], joints[i].min, joints[i].max);
+
+            if (DistanceFromTarget(target) < distanceThreshold)
+                return;
+        }
+    }
+
 
     private float InRange(float value)
     {
@@ -74,4 +111,3 @@ public class Kinematics : MonoBehaviour
         return value;
     }
 }
-//https://pastebin.com/sjsHLT5d

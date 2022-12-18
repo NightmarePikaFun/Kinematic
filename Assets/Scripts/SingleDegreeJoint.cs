@@ -10,6 +10,9 @@ public class SingleDegreeJoint : MonoBehaviour
         RotateY = 1,
         RotateZ = 2
     }
+    public Vector3 StartOffset;
+    public float max=100, min=-100;
+    
     public JointDegree degreeOfFreedom;
     private Vector3 _axis;
     void Start()
@@ -30,6 +33,8 @@ public class SingleDegreeJoint : MonoBehaviour
     
     public void SetValue(float value)
     {
+        // value = value > max ? max : value;
+        // value = value < min ? min : value;
         var transform1 = transform;
         transform1.localEulerAngles = degreeOfFreedom switch
         {
@@ -40,14 +45,19 @@ public class SingleDegreeJoint : MonoBehaviour
         };
     }
 
-    public Vector3 GetPosition()
+    void Awake ()
     {
-        return this.transform.position;
+        StartOffset = transform.localPosition;
     }
-
+    
     public float GetValue()
     {
         return transform.localEulerAngles[(int) degreeOfFreedom];
+    }
+
+    public Vector3 GetPosithon()
+    {
+        return transform.position;
     }
     
 }

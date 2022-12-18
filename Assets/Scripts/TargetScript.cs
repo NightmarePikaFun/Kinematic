@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TargetScript : MonoBehaviour
 {
-    private const float Speed = 2;
-    public Vector3 _target;
+    private const float Speed = 1;
+    private Vector3 _target;
 
     void Start()
     {
@@ -18,6 +18,7 @@ public class TargetScript : MonoBehaviour
         if (!OnTarget())
         {
             var distance = Time.deltaTime * Speed;
+
             var direction = _target - transform.position;
             direction.Normalize();
             transform.position += direction*distance;
@@ -27,7 +28,7 @@ public class TargetScript : MonoBehaviour
 
     private void ResetTarget()
     {
-        _target = Random.onUnitSphere * 5;
+        _target = Random.onUnitSphere *2;
     }
 
     private bool OnTarget()
