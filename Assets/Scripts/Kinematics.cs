@@ -48,16 +48,6 @@ public class Kinematics : MonoBehaviour
     }
 
 
-    public void hateWorld()
-    {
-        var delta = Time.deltaTime * speed;
-        for (var i = 0; i < solution.Length; i++)
-        {
-            solution[i] = InRange(solution[i] + (i + 1) * delta);
-        }
-    }
-
-
     public float PartialGradient(Vector3 target, int i, float samplingDistance)
     {
 

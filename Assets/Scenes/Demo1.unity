@@ -264,7 +264,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ccf76f50eab72b458156a89b5a9c3ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _target: {x: 0, y: 0, z: 0}
 --- !u!54 &1170709681
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -638,6 +637,10 @@ PrefabInstance:
     - target: {fileID: 8676827943110912275, guid: 54f7df0d65986f34293ec1accf543095, type: 3}
       propertyPath: degreeOfFreedom
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8676827943504344743, guid: 54f7df0d65986f34293ec1accf543095, type: 3}
+      propertyPath: speed
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 8676827943504344743, guid: 54f7df0d65986f34293ec1accf543095, type: 3}
       propertyPath: anchor
